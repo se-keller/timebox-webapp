@@ -1,18 +1,3 @@
-/*
-h = hour in floating point 2.25 = 2:15
-cx,cy = center coordinates
-hLength = length of hour hand
-mLength = lenght of min hand
-// Hour hand
-hAngle = 2.0*Pi*h/12.0; // 0..12 mapped to 0..2*Pi
-hX = cX + hLength * sin(hAngle);
-hY = cY - hLength * cos(hAngle);
-
-// Min hand
-mAngle = 2.0*Pi*h; // 0..1 mapped to 0..2*Pi, etc.
-mX = cX + mLength * sin(mAngle);
-mY = cY - mLength * cos(mAngle);
-*/
 var ctx
 var radius
 var countdown
@@ -35,9 +20,9 @@ function drawClock(minutes) {
 	canvas.addEventListener("mouseup", mouseUpListener, false);
 	canvas.addEventListener("mousemove", mousePositionListener, false);
 
-	canvas.addEventListener("touchstart", mouseDownListener, false);
-    canvas.addEventListener("touchmove", mousePositionListener, false);
-    canvas.addEventListener("touchend", mouseUpListener, false);
+	//canvas.addEventListener("touchstart", mouseDownListener, false);
+    //canvas.addEventListener("touchmove", mousePositionListener, false);
+    //canvas.addEventListener("touchend", mouseUpListener, false);
 
 
 	ctx = canvas.getContext("2d");
@@ -154,7 +139,7 @@ function drawTime(minute, second, clockwise){
 
 
 	drawHand(0, radius*0.84, radius*0.02, 'red');
-	drawHand(minute, radius*0.84, radius*0.01,'white');
+	drawHand(minute, radius*0.84, radius*0.01,'red');
 	
 
 	ctx.beginPath();
