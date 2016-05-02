@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 function drawClock(minutes) {
 	canvas = document.getElementById("timebox");
-	canvas.width  = window.innerWidth;
-	canvas.height = window.innerHeight;
+	var diameter = Math.min(window.innerHeight, window.innerWidth)
+	canvas.width  = diameter;
+	canvas.height = diameter;
 	
 
 	canvas.addEventListener("mousedown", mouseDownListener, false);
@@ -26,7 +27,7 @@ function drawClock(minutes) {
 
 
 	ctx = canvas.getContext("2d");
-	radius = Math.min(canvas.height, canvas.width) / 2;
+	radius = diameter / 2;
 	ctx.translate(radius, radius);
 	radius = radius * 0.90
   	countdown = new Countdown(minutes, function(minute, second){
