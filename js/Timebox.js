@@ -14,6 +14,10 @@ function Timebox(canvas) {
 	canvas.addEventListener("mouseup", mouseUpListener,false);
 	canvas.addEventListener("mousemove", mousePositionListener,false);
 	
+	canvas.addEventListener("touchstart", touchDown, false);
+    canvas.addEventListener("touchmove", touchMove, true);
+    canvas.addEventListener("touchend", touchUp, false);
+	
 	this.start = function(minutes) {
 		draw(minutes,0)
 		countdown = new Countdown(minutes, function(minute, second){
@@ -35,38 +39,70 @@ function Timebox(canvas) {
 	}
 
 	function mouseDownListener(evt) {
-	evt.preventDefault()
-	countdown.stop();
-	isMouseDown = true;
-	console.log('stop')
-	mousePositionListener(evt)
-}
+		evt.preventDefault()
+		countdown.stop();
+		isMouseDown = true;
+		console.log('stop')
+		mousePositionListener(evt)
+	}
 
-function mouseUpListener(evt) {
-	evt.preventDefault()
-	countdown.start();
-	isMouseDown = false;
-	console.log('start')
-}
+	function mouseUpListener(evt) {
+		evt.preventDefault()
+		countdown.start();
+		isMouseDown = false;
+		console.log('start')
+	}
 
-function mousePositionListener(evt) {
-	evt.preventDefault()
-	if(isMouseDown) {
-		var bRect = canvas.getBoundingClientRect()
-		mouseX = (evt.clientX - bRect.left)*(canvas.width/bRect.width)
-		mouseY = (evt.clientY - bRect.top)*(canvas.height/bRect.height)
-		var centerX = canvas.width/2
-		var centerY = canvas.height/2
-		var minutes = new PointTimeConverter(Math.min(centerX, centerY), Math.min(centerX, centerY)).toMinutes(mouseX, mouseY)
-		console.log('mouse: '+mouseX + ':' + mouseY)
-		console.log('event: '+evt.clientX + ':' + evt.clientY)
-		draw(minutes,0)
-		
-		countdown = new Countdown(minutes, function(minute, second){
-	    	draw(minute,second)
-	  	})
-  	}
-  }
+	function mousePositionListener(evt) {
+		evt.preventDefault()
+		if(isMouseDown) {
+			var bRect = canvas.getBoundingClientRect()
+			mouseX = (evt.clientX - bRect.left)*(canvas.width/bRect.width)
+			mouseY = (evt.clientY - bRect.top)*(canvas.height/bRect.height)
+			var centerX = canvas.width/2
+			var centerY = canvas.height/2
+			var minutes = new PointTimeConverter(Math.min(centerX, centerY), Math.min(centerX, centerY)).toMinutes(mouseX, mouseY)
+			console.log('mouse: '+mouseX + ':' + mouseY)
+			console.log('event: '+evt.clientX + ':' + evt.clientY)
+			draw(minutes,0)
+			
+			countdown = new Countdown(minutes, function(minute, second){
+		    	draw(minute,second)
+		  	})
+	  	}
+	}
+
+	function touchDown(evt) {
+		evt.preventDefault()
+		countdown.stop();
+		isMouseDown = true;
+		console.log('stop')
+		touchMove(evt)
+	}
+	function touchMove(evt) {
+		evt.preventDefault()
+		if(isMouseDown) {
+			var bRect = canvas.getBoundingClientRect()
+			mouseX = (evt.targetTouches[0].clientX - bRect.left)*(canvas.width/bRect.width)
+			mouseY = (evt.targetTouches[0].clientY - bRect.top)*(canvas.height/bRect.height)
+			var centerX = canvas.width/2
+			var centerY = canvas.height/2
+			var minutes = new PointTimeConverter(Math.min(centerX, centerY), Math.min(centerX, centerY)).toMinutes(mouseX, mouseY)
+			console.log('mouse: '+mouseX + ':' + mouseY)
+			console.log('event: '+evt.clientX + ':' + evt.clientY)
+			draw(minutes,0)
+			
+			countdown = new Countdown(minutes, function(minute, second){
+		    	draw(minute,second)
+		  	})
+	  	}
+	}
+	function touchUp(evt) {
+		evt.preventDefault()
+		countdown.start();
+		isMouseDown = false;
+		console.log('start')
+	}
 
     function drawCenter() {
 		drawCenterCircle('white', radius*0.2)
