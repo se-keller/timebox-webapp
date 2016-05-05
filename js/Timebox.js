@@ -23,7 +23,13 @@ function Timebox(canvas) {
 		countdown = new Countdown(minutes, function(minute, second){
 	    	draw(minute,second)
 		})
+		countdown.setFinishedListener(playPing)
 		countdown.start()	
+	}
+
+	function playPing() {
+		var audio = document.getElementById("ping-audio"); 
+		audio.play()
 	}
 	
 	function draw(minute, second) {
@@ -77,6 +83,7 @@ function Timebox(canvas) {
 			countdown = new Countdown(minutes, function(minute, second){
 		    	draw(minute,second)
 		  	})
+		  	countdown.setFinishedListener(playPing)
 	  	}
 	}
 
