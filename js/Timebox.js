@@ -1,36 +1,40 @@
 function Timebox(canvas) {
 	var countdown
-	var ctx = canvas.getContext("2d");
-	var diameter = Math.min(window.innerHeight, window.innerWidth)
-	var isDragging = false;
-	canvas.width  = diameter;
-	canvas.height = diameter;
+	var ctx = canvas.getContext("2d")
+	var diameter = 0
+	var radius = 0
+	var isDragging = false
 
+	window.addEventListener("resize", function() {
+		console.log("resize")
+		resize()
+	})
+	
+	resize()
+	
+    addDragListeners()
 	
 
-	var radius = diameter / 2;
-	ctx.translate(radius, radius);
-	radius = radius * 0.90
-
-	canvas.addEventListener("mousedown", mouseDownListener,false);
-	canvas.addEventListener("mousemove", mousePositionListener,true);
-	canvas.addEventListener("mouseup", draggingEnd, false);
-	
-	canvas.addEventListener("touchstart", touchDown, false);
-    canvas.addEventListener("touchmove", touchMove, true);
-    canvas.addEventListener("touchend", draggingEnd, false);
-
-
-    
-	
 	this.start = function(minutes) {
-		drawLogo()
+		
 		draw(minutes,0)
 		countdown = new Countdown(minutes, function(minute, second){
 	    	draw(minute,second)
 		})
 		countdown.setFinishedListener(playPing)
 		countdown.start()	
+	}
+
+	function resize() {
+		var rect = canvas.getBoundingClientRect()
+		diameter = Math.min(window.innerHeight, window.innerWidth)
+		canvas.width  = diameter;
+		canvas.height = diameter;
+
+		radius = diameter / 2;
+		ctx.translate(radius, radius);
+		radius = radius * 0.90
+		drawLogo()
 	}
 
 	function drawLogo() {
@@ -46,7 +50,18 @@ function Timebox(canvas) {
 		audio.play()
 	}
 	
+	function addDragListeners() {
+		canvas.addEventListener("mousedown", mouseDownListener,false);
+		canvas.addEventListener("mousemove", mousePositionListener,true);
+		canvas.addEventListener("mouseup", draggingEnd, false);
+		
+		canvas.addEventListener("touchstart", touchDown, false);
+	    canvas.addEventListener("touchmove", touchMove, true);
+	    canvas.addEventListener("touchend", draggingEnd, false);
+	}
+
 	function draw(minute, second) {
+		canvas.style.backgroundColor = 'white'
 		drawFace()
     	drawTime(minute, second)
     	drawCenter()
@@ -60,6 +75,13 @@ function Timebox(canvas) {
 	function touchDown(evt) {
 		draggingStart(evt)
 		touchMove(evt)
+	}
+
+	function fullScreen() {
+		if(canvas.webkitRequestFullScreen) 
+           	canvas.webkitRequestFullScreen()
+        else 
+            canvas.mozRequestFullScreen()
 	}
 
 	function draggingStart(evt) {
@@ -85,19 +107,29 @@ function Timebox(canvas) {
 	}
 
 	function changeTimeByDragging(clientX, clientY) {
+
 		if(isDragging) {
 			var bRect = canvas.getBoundingClientRect()
 			var mouseX = (clientX - bRect.left)*(canvas.width/bRect.width)
 			var mouseY = (clientY - bRect.top)*(canvas.height/bRect.height)
+
 			var centerX = canvas.width/2
 			var centerY = canvas.height/2
-			var minutes = new PointTimeConverter(Math.min(centerX, centerY), Math.min(centerX, centerY)).toMinutes(mouseX, mouseY)
-			draw(minutes,0)
-			
-			countdown = new Countdown(minutes, function(minute, second){
-		    	draw(minute,second)
-		  	})
-		  	countdown.setFinishedListener(playPing)
+			console.log("mouseX "+ mouseX)
+			console.log("mouseY "+ mouseY)
+			console.log("centerX "+ centerX)
+			console.log("centerY "+ centerY)
+			if(mouseX > centerX-radius*0.1 && mouseX < centerX+radius*0.1 && mouseY > centerY-radius*0.1 && mouseY < centerY+radius*0.1) {
+				fullScreen()
+			} else {
+				var minutes = new PointTimeConverter(Math.min(centerX, centerY), Math.min(centerX, centerY)).toMinutes(mouseX, mouseY)
+				draw(minutes,0)
+				
+				countdown = new Countdown(minutes, function(minute, second){
+			    	draw(minute,second)
+			  	})
+			  	countdown.setFinishedListener(playPing)
+		  }
 	  	}
 	}
 
