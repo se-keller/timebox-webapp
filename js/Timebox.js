@@ -6,6 +6,8 @@ function Timebox(canvas) {
 	canvas.width  = diameter;
 	canvas.height = diameter;
 
+	
+
 	var radius = diameter / 2;
 	ctx.translate(radius, radius);
 	radius = radius * 0.90
@@ -17,8 +19,12 @@ function Timebox(canvas) {
 	canvas.addEventListener("touchstart", touchDown, false);
     canvas.addEventListener("touchmove", touchMove, true);
     canvas.addEventListener("touchend", draggingEnd, false);
+
+
+    
 	
 	this.start = function(minutes) {
+		drawLogo()
 		draw(minutes,0)
 		countdown = new Countdown(minutes, function(minute, second){
 	    	draw(minute,second)
@@ -27,15 +33,23 @@ function Timebox(canvas) {
 		countdown.start()	
 	}
 
+	function drawLogo() {
+		var logo = new Image();
+  		logo.onload = function(){
+    		ctx.drawImage(logo, radius*0.64, radius*0.8, radius*0.4, radius*0.2);
+  		}	
+		logo.src = 'resources/images/it-agileLogo.png';
+	}
+
 	function playPing() {
-		var audio = document.getElementById("ping-audio"); 
+		var audio = new Audio("resources/audio/ping.mp3")
 		audio.play()
 	}
 	
 	function draw(minute, second) {
 		drawFace()
     	drawTime(minute, second)
-    	drawCenter()	
+    	drawCenter()
 	}
 
 	function mouseDownListener(evt) {
